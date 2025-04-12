@@ -1,7 +1,7 @@
-import requests
 import time
 from webull import paper_webull
 from prettyprinter import pprint
+from security import safe_requests
 
 
 f = open("secrets.txt", "r")
@@ -23,7 +23,7 @@ for line in f:
    temp.append(line.strip("\n"))
 stocks = {}
 for stock in temp:
-   r = requests.get(f"https://finnhub.io/api/v1/quote?symbol={stock}&token={api_key}").json()
+   r = safe_requests.get(f"https://finnhub.io/api/v1/quote?symbol={stock}&token={api_key}").json()
    stocks[stock] = r["c"]
 
 def check_api_limit(response):
@@ -39,8 +39,8 @@ def check_position_exists(stock):
    return False
 
 def resistance_check(stc):
-   x = requests.get(f'https://finnhub.io/api/v1/scan/support-resistance?symbol={stc}&resolution=15&token={api_key}').json()
-   quote = requests.get(f'https://finnhub.io/api/v1/quote?symbol={stc}&token={api_key}').json()
+   x = safe_requests.get(f'https://finnhub.io/api/v1/scan/support-resistance?symbol={stc}&resolution=15&token={api_key}').json()
+   quote = safe_requests.get(f'https://finnhub.io/api/v1/quote?symbol={stc}&token={api_key}').json()
    if x == {} or check_api_limit(x) or check_api_limit(quote):
       return False
    price = quote["c"]
@@ -54,8 +54,8 @@ def resistance_check(stc):
    return False
 
 def support_check(stc):
-   x = requests.get(f'https://finnhub.io/api/v1/scan/support-resistance?symbol={stc}&resolution=15&token={api_key}').json()
-   quote = requests.get(f'https://finnhub.io/api/v1/quote?symbol={stc}&token={api_key}').json()
+   x = safe_requests.get(f'https://finnhub.io/api/v1/scan/support-resistance?symbol={stc}&resolution=15&token={api_key}').json()
+   quote = safe_requests.get(f'https://finnhub.io/api/v1/quote?symbol={stc}&token={api_key}').json()
    if x == {} or check_api_limit(x) or check_api_limit(quote):
       return False
    price = quote["c"]
@@ -83,7 +83,7 @@ def execute_limit_sell(stc, prc, qty):
 
 
 def buy_signal(stc):
-   r = requests.get(f'https://finnhub.io/api/v1/scan/technical-indicator?symbol={stc}&resolution=30&token={api_key}').json()
+   r = safe_requests.get(f'https://finnhub.io/api/v1/scan/technical-indicator?symbol={stc}&resolution=30&token={api_key}').json()
    if r == {} or check_api_limit(r):
       return False
    buy = r["technicalAnalysis"]["count"]["buy"]
