@@ -2,25 +2,23 @@ import requests
 import time
 from webull import paper_webull
 from prettyprinter import pprint
-
-
-f = open("secrets.txt", "r")
-secrets = []
-for line in f:
-   secrets.append(line.strip("\n"))
-email = secrets[0]
-password = secrets[1]
-trade_token = secrets[2]
-api_key = secrets[3]
-print(email, password, trade_token, api_key)
-
-wb = paper_webull()
-wb.login(email, password, "Seth", 674173)
-
-f = open("stocks.txt", "r")
-temp = []
-for line in f:
-   temp.append(line.strip("\n"))
+with open("secrets.txt", "r") as f:
+   secrets = []
+   for line in f:
+      secrets.append(line.strip("\n"))
+   email = secrets[0]
+   password = secrets[1]
+   trade_token = secrets[2]
+   api_key = secrets[3]
+   print(email, password, trade_token, api_key)
+   
+   wb = paper_webull()
+   wb.login(email, password, "Seth", 674173)
+   
+   f = open("stocks.txt", "r")
+   temp = []
+   for line in f:
+      temp.append(line.strip("\n"))
 stocks = {}
 for stock in temp:
    r = requests.get(f"https://finnhub.io/api/v1/quote?symbol={stock}&token={api_key}").json()
